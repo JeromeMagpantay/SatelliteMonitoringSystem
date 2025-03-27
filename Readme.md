@@ -28,7 +28,7 @@ Install the required dependencies from the `requirements.txt` file:
 ```bash
 pip install -r requirements.txt
 ```
-
+### 3. Run RabbitMQ on a docker image.
 ---
 
 ## Run Instructions
@@ -43,13 +43,13 @@ This will start the server, and you can access the API documentation at `http://
 ### 2. Boot the RabbitMQ Consumer
 Run the consumer script to handle logging tasks:
 ```bash
-python logging/log_consumer.py
+python -m logging.log_consumer
 ```
 
 ### 3. Run the Network Script
 Execute the `network.py` script to start up the satellite network.
 ```bash
-python network.py
+python -m satellites.network
 ```
 
 ---

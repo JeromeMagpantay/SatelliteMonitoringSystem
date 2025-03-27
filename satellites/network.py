@@ -1,8 +1,8 @@
 import time
 import requests
 from datetime import datetime
-from satellite import Satellite
-from logging.rabbitmq_logs import StatusLogger
+from .satellite import Satellite
+from custom_logging.rabbitmq_logs import StatusLogger
 
 REGION_API_URL = "http://localhost:8000/regions"
 UPDATE_INTERVAL = 10  # Check every 10 seconds
@@ -208,4 +208,4 @@ class SatelliteNetwork:
 
 if __name__ == "__main__":
     network = SatelliteNetwork()
-    network.start_satellite_network()
+    network.start_network()
