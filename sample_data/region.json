@@ -1,0 +1,108 @@
+[
+    {
+      "name": "Southwestern Ontario",
+      "region_number": 1,
+      "number_of_clients": 280000,
+      "peak_usage_start_time": "14:00:00",
+      "peak_usage_end_time": "16:00:00"
+    },
+    {
+      "name": "Niagara Region",
+      "region_number": 2,
+      "number_of_clients": 54000,
+      "peak_usage_start_time": "15:00:00",
+      "peak_usage_end_time": "16:00:00"
+    },
+    {
+      "name": "Hamilton, Halton and Brant",
+      "region_number": 3,
+      "number_of_clients": 146000,
+      "peak_usage_start_time": "16:00:00",
+      "peak_usage_end_time": "17:30:00"
+    },
+    {
+      "name": "Huron, Perth, Waterloo and Wellington",
+      "region_number": 4,
+      "number_of_clients": 112000,
+      "peak_usage_start_time": "17:00:00",
+      "peak_usage_end_time": "19:00:00"
+    },
+    {
+      "name": "Greater Toronto Area",
+      "region_number": 5,
+      "number_of_clients": 494000,
+      "peak_usage_start_time": "22:00:00",
+      "peak_usage_end_time": "23:00:00"
+    },
+    {
+      "name": "York, Durham and Headwaters",
+      "region_number": 6,
+      "number_of_clients": 208000,
+      "peak_usage_start_time": "18:00:00",
+      "peak_usage_end_time": "19:30:00"
+    },
+    {
+      "name": "Bruce, Grey and Simcoe",
+      "region_number": 7,
+      "number_of_clients": 77000,
+      "peak_usage_start_time": "19:00:00",
+      "peak_usage_end_time": "21:00:00"
+    },
+    {
+      "name": "Kawarthas and Northumberland",
+      "region_number": 8,
+      "number_of_clients": 18000,
+      "peak_usage_start_time": "20:00:00",
+      "peak_usage_end_time": "21:00:00"
+    },
+    {
+      "name": "Southeastern Ontario",
+      "region_number": 9,
+      "number_of_clients": 87500,
+      "peak_usage_start_time": "21:00:00",
+      "peak_usage_end_time": "22:30:00"
+    },
+    {
+      "name": "Ottawa Region",
+      "region_number": 10,
+      "number_of_clients": 102000,
+      "peak_usage_start_time": "22:00:00",
+      "peak_usage_end_time": "00:00:00"
+    },
+    {
+      "name": "Haliburton Highlands to the Ottawa Valley",
+      "region_number": 11,
+      "number_of_clients": 9000,
+      "peak_usage_start_time": "23:00:00",
+      "peak_usage_end_time": "00:00:00"
+    },
+    {
+      "name": "Algonquin Park, Muskoka and Parry Sound",
+      "region_number": 12,
+      "number_of_clients": 14000,
+      "peak_usage_start_time": "00:00:00",
+      "peak_usage_end_time": "01:30:00"
+    },
+    {
+      "name": "Northeastern Ontario",
+      "region_number": 13,
+      "number_of_clients": 55000,
+      "peak_usage_start_time": "01:00:00",
+      "peak_usage_end_time": "03:00:00"
+    },
+    {
+      "name": "Sault Ste. Marie and Algoma",
+      "region_number": 14,
+      "number_of_clients": 12000,
+      "peak_usage_start_time": "02:00:00",
+      "peak_usage_end_time": "03:00:00"
+    },
+    {
+      "name": "Northwest Ontario",
+      "region_number": 15,
+      "number_of_clients": 7000,
+      "peak_usage_start_time": "15:00:00",
+      "peak_usage_end_time": "16:30:00"
+    }
+  ]
+  
