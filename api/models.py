@@ -1,7 +1,8 @@
 from bson import ObjectId
+from datetime import datetime
 from pydantic import BaseModel, Field
 from pydantic_core import core_schema
-from typing import Any, Optional
+from typing import Any, Literal, Optional
 
 
 # Needed  to handle Mongo's ObjectIDs.
@@ -39,3 +40,21 @@ class Region(BaseModel):
 
     class Config:
         json_encoders = {ObjectId: str}
+
+class LogEntry(BaseModel):
+    timestamp: datetime = Field(default_factory=datetime.now)
+    status: Literal["INACTIVE - AVAILABLE", "INACTIVE - UNAVAILABLE", "ACTIVE"]
+    classification: Literal["HIGH", "MEDIUM", "LOW"]
+    routing_key: str = Field(...)
+    satellite_id: str = Field(alias="id")                                            # Satellite ID like "HIGH-10"
+    region: Optional[int] = None  
+    peak_boost: Optional[bool] = None
+    object_id: Optional[PyObjectId] = Field(alias="_id", default=None) 
+
+    class Config:
+        json_encoders = {
+            ObjectId: str,
+            datetime: lambda v: v.isoformat()
+        }
+        arbitrary_types_allowed = True
+        populate_by_name = True

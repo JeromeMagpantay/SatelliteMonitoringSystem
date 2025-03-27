@@ -149,7 +149,7 @@ class SatelliteNetwork:
         }
 
         for region in regions:
-            required = calculate_required_load(region)  # Dynamic load calculation
+            required = calculate_required_load(region)  
             current_capacity = self.get_region_capacity(region)
             shortfall = required - current_capacity
             
