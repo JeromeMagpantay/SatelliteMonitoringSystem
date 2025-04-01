@@ -1,5 +1,8 @@
 from random import randint
 import time
+import requests
+
+REGION_API_URL = "http://localhost:8000/regions"
 
 class Satellite:
     def __init__(self, id, classification):
@@ -21,8 +24,9 @@ class Satellite:
         if self.status == "INACTIVE - AVAILABLE":
             self.region = region
             self.status = "ACTIVE"
-        else:
-            raise ValueError("Satellite not available for assignment.")
+            return True 
+        return False
+
 
     def power_outage(self):
         if self.status == "ACTIVE":

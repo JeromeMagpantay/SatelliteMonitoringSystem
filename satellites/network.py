@@ -80,15 +80,50 @@ class SatelliteNetwork:
             self.logger.log("system.error", {"message": f"Region fetch error: {e}"})
             return []
 
+    def get_satellites_in_region(self, region_number: int) -> list:
+        return [sat for sat in self.satellites 
+                if sat.region and sat.region['region_number'] == region_number]
+
+    def calculate_coverage(self, region: dict) -> bool:
+        satellites = self.get_satellites_in_region(region['region_number'])
+        total_capacity = sum(sat.capacity for sat in satellites)
+        required_load = calculate_required_load(region)
+        return total_capacity >= required_load
+
+    def update_region(self, region_number: int):
+        try:
+            print("attempted")
+            satellites = self.get_satellites_in_region(region_number)
+            satellite_ids = [sat.id for sat in satellites]
+            
+            region = requests.get(f"{REGION_API_URL}/{region_number}").json()
+            coverage_flag = self.calculate_coverage(region)
+            print(satellite_ids)
+            requests.put(
+                f"{REGION_API_URL}/{region_number}",
+                json={
+                    "satellite_providers": satellite_ids,
+                    "coverage_flag": coverage_flag
+                }
+            )
+        except Exception as e:
+            print(region)
+            print(type(region_number))
+            print(region_number)
+            print(f"failed + {e}")
+            self.logger.log("system.error", {
+                "message": f"Region update failed for R{region_number}: {str(e)}"
+            })
+
     def assign_initial_satellites(self):
         regions = self.fetch_regions()
         available = {
             "HIGH": [sat for sat in self.satellites 
                     if sat.classification == "HIGH" and sat.status == "INACTIVE - AVAILABLE"],
             "MEDIUM": [sat for sat in self.satellites 
-                      if sat.classification == "MEDIUM" and sat.status == "INACTIVE - AVAILABLE"],
+                    if sat.classification == "MEDIUM" and sat.status == "INACTIVE - AVAILABLE"],
             "LOW": [sat for sat in self.satellites 
-                   if sat.classification == "LOW" and sat.status == "INACTIVE - AVAILABLE"]
+                if sat.classification == "LOW" and sat.status == "INACTIVE - AVAILABLE"]
         }
         
         # Reserve spares
@@ -102,16 +137,23 @@ class SatelliteNetwork:
                 for _ in range(count):
                     if available[classification]:
                         sat = available[classification].pop(0)
-                        sat.assign_to_region(region)
-                        self.logger.log("satellite.assigned", {
-                            "satellite_id": sat.id,
-                            "region": region['region_number'],
-                            "capacity": CAPACITIES[classification]
-                        })
+                        if sat.assign_to_region(region): 
+                            self.update_region(region['region_number']) 
+                            print("updated")
+                            self.logger.log("satellite.assigned", {
+                                "satellite_id": sat.id,
+                                "region": region['region_number'],
+                                "capacity": CAPACITIES[classification]
+                            })
+                        else:
+                            self.logger.log("system.warning", {
+                                "message": f"Assignment failed for {sat.id} in R{region['region_number']}"
+                            })
                     else:
                         self.logger.log("system.warning", {
                             "message": f"Not enough {classification} satellites for region {region['region_number']}"
                         })
+
 
     def get_region_capacity(self, region) -> int:
         total = 0
@@ -123,6 +165,10 @@ class SatelliteNetwork:
     def check_outages(self):
         for sat in self.satellites:
             if sat.power_outage():
+                prev_region = sat.region['region_number'] if sat.region else None
+                sat.region = None
+                if prev_region:
+                    self.update_region(prev_region)
                 self.logger.log("satellite.outage", {
                     "satellite_id": sat.id,
                     "timestamp": time.time(),
@@ -143,13 +189,13 @@ class SatelliteNetwork:
             "HIGH": [sat for sat in self.satellites 
                     if sat.classification == "HIGH" and sat.status == "INACTIVE - AVAILABLE"],
             "MEDIUM": [sat for sat in self.satellites 
-                      if sat.classification == "MEDIUM" and sat.status == "INACTIVE - AVAILABLE"],
+                    if sat.classification == "MEDIUM" and sat.status == "INACTIVE - AVAILABLE"],
             "LOW": [sat for sat in self.satellites 
-                   if sat.classification == "LOW" and sat.status == "INACTIVE - AVAILABLE"]
+                if sat.classification == "LOW" and sat.status == "INACTIVE - AVAILABLE"]
         }
 
         for region in regions:
-            required = calculate_required_load(region)  
+            required = calculate_required_load(region)
             current_capacity = self.get_region_capacity(region)
             shortfall = required - current_capacity
             
@@ -159,17 +205,22 @@ class SatelliteNetwork:
                     for _ in range(count):
                         if available[classification]:
                             sat = available[classification].pop(0)
-                            sat.assign_to_region(region)
-                            self.logger.log("satellite.reassigned", {
-                                "satellite_id": sat.id,
-                                "region": region['region_number'],
-                                "shortfall": shortfall,
-                                "new_capacity": current_capacity + CAPACITIES[classification],
-                                "peak_boost": is_peak_time(
-                                    region["peak_usage_start_time"],
-                                    region["peak_usage_end_time"]
-                                )
-                            })
+                            if sat.assign_to_region(region): 
+                                self.update_region(region['region_number'])  
+                                self.logger.log("satellite.reassigned", {
+                                    "satellite_id": sat.id,
+                                    "region": region['region_number'],
+                                    "shortfall": shortfall,
+                                    "new_capacity": current_capacity + CAPACITIES[classification],
+                                    "peak_boost": is_peak_time(
+                                        region["peak_usage_start_time"],
+                                        region["peak_usage_end_time"]
+                                    )
+                                })
+                            else:
+                                self.logger.log("system.warning", {
+                                    "message": f"Reassignment failed for {sat.id} in R{region['region_number']}"
+                                })
                         else:
                             self.logger.log("system.warning", {
                                 "message": f"Can't replenish region {region['region_number']} with {classification} satellites"
@@ -178,7 +229,7 @@ class SatelliteNetwork:
     def log_satellite_statuses(self):
         for sat in self.satellites:
             self.logger.log("satellite.status", {
-                "id": sat.id,
+                "satellite_id": sat.id,
                 "status": sat.status,
                 "region": sat.region['region_number'] if sat.region else None,
                 "timestamp": time.time(),

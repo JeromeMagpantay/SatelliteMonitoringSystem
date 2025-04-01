@@ -2,7 +2,7 @@ from bson import ObjectId
 from datetime import datetime
 from pydantic import BaseModel, Field
 from pydantic_core import core_schema
-from typing import Any, Literal, Optional
+from typing import Any, Literal, List, Optional
 
 
 # Needed  to handle Mongo's ObjectIDs.
@@ -37,16 +37,18 @@ class Region(BaseModel):
     number_of_clients: int = Field(...)
     peak_usage_start_time: str = Field(...)             # Format: HH:MM:SS, so the time is in UTC 
     peak_usage_end_time: str = Field(...)               # makes sense in reference to EST as per Ontario
+    coverage_flag: bool = Field(...)                    # Is the region coverage?
+    satellite_providers: List[str] | List[None] = Field(...)
 
     class Config:
         json_encoders = {ObjectId: str}
 
 class LogEntry(BaseModel):
-    timestamp: datetime = Field(default_factory=datetime.now)
-    status: Literal["INACTIVE - AVAILABLE", "INACTIVE - UNAVAILABLE", "ACTIVE"]
-    classification: Literal["HIGH", "MEDIUM", "LOW"]
-    routing_key: str = Field(...)
-    satellite_id: str = Field(alias="id")                                            # Satellite ID like "HIGH-10"
+    timestamp: Optional[datetime] = Field(default_factory=datetime.now)
+    status: Optional[Literal["INACTIVE - AVAILABLE", "INACTIVE - UNAVAILABLE", "ACTIVE"]] = None
+    classification: Optional[Literal["HIGH", "MEDIUM", "LOW"]] = None
+    routing_key: Optional[str] = None
+    satellite_id: Optional[str] = Field(alias="id")
     region: Optional[int] = None  
     peak_boost: Optional[bool] = None
     object_id: Optional[PyObjectId] = Field(alias="_id", default=None) 
