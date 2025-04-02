@@ -28,13 +28,13 @@ function Sidebar() {
         // Fetch immediately
         fetchRegions();
 
-        // // Set up polling interval
-        // const interval = setInterval(fetchRegions, 10000);
+        // Set up polling interval
+        const interval = setInterval(fetchRegions, 10000);
 
-        // // Cleanup on unmount
-        // return () => clearInterval(interval);
+        // Cleanup on unmount
+        return () => clearInterval(interval);
     }, []);
-
+    
     return (
         <div className="w-[400px] bg-neutral flex flex-col p-5 rounded-lg space-y-5">
             <div className='flex items-center space-x-2'>

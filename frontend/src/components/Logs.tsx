@@ -32,6 +32,10 @@ function Logs() {
                     const response = await axios.get("http://127.0.0.1:8000/logs?limit=300", );
                     setLogs(response.data);    
                 }
+                else {
+                    const response = await axios.get(`http://127.0.0.1:8000/logs/${selected}?limit=300`, );
+                    setLogs(response.data);    
+                }
             } catch (error) {
                 console.error("Error fetching logs:", error);
             }
@@ -40,14 +44,12 @@ function Logs() {
         // Fetch immediately
         fetchLogs();
 
-        // // Set up polling interval
-        // const interval = setInterval(fetchRegions, 10000);
+        // Set up polling interval
+        const interval = setInterval(fetchLogs, 10000);
 
-        // // Cleanup on unmount
-        // return () => clearInterval(interval);
-    }, []);
-
-    console.log(logs)
+        // Cleanup on unmount
+        return () => clearInterval(interval);
+    }, [selected]);
 
     const highlightJSON = (json: Object) => {
         let jsonStr = JSON.stringify(json, null, 2);
