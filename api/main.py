@@ -3,12 +3,21 @@ import asyncio
 from datetime import datetime 
 from dotenv import load_dotenv 
 from fastapi import Body, FastAPI, WebSocket, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 from models import LogEntry, Region
 import motor.motor_asyncio
 import os
 from typing import List, Optional
 
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 load_dotenv()
 CONNECTION_STRING = os.getenv("MONGO_CREDETIALS")
@@ -54,7 +63,7 @@ async def get_logs(
     type: Optional[str] = None,
     limit: int = 100
 ):
-    logs = await logs_collection.find().to_list(100)
+    logs = await logs_collection.find().to_list(limit)
     return logs
 
 @app.get("/logs/{region_id}", response_model=List[LogEntry])

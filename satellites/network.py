@@ -5,7 +5,7 @@ from satellite import Satellite
 from rabbitmq_logs import StatusLogger
 
 REGION_API_URL = "http://localhost:8000/regions"
-UPDATE_INTERVAL = 10  # Check every 10 seconds
+UPDATE_INTERVAL = 30  # Check every 10 seconds
 
 # Constants for satellite capacities and reserved spares
 CAPACITIES = {"HIGH": 200000, "MEDIUM": 100000, "LOW": 50000}
