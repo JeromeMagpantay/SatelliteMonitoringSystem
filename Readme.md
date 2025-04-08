@@ -30,6 +30,7 @@ pip install -r requirements.txt
 ```
 ### 3. Run RabbitMQ on a docker image.
 ---
+### 4. Create a .env file with the MONGO_CREDENTIALS added.
 
 ## Run Instructions
 
@@ -43,13 +44,13 @@ This will start the server, and you can access the API documentation at `http://
 ### 2. Boot the RabbitMQ Consumer
 Run the consumer script to handle logging tasks:
 ```bash
-python -m logging.log_consumer
+python sattelites/logs_consumer.py
 ```
 
 ### 3. Run the Network Script
 Execute the `network.py` script to start up the satellite network.
 ```bash
-python -m satellites.network
+python sattelites/network.py
 ```
 
 ---
